@@ -1,7 +1,6 @@
 #!/bin/sh
 
 build_push(){
-  cd exim
   nerdctl build --platform=${ARCHS} --output type=image,name=${REGISTRY}/${NAME}:latest,push=true .
 }
 
@@ -15,7 +14,7 @@ helm_build_push(){
 REGISTRY=registry.solenopsys.org
 NAME=platform-ms-keys
 ARCHS="amd64"
-VER=0.1.0
+VER=0.1.2
 
 
 helm_build_push

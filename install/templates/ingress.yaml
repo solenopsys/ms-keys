@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: git-ingress
+  name: keys-ingress
   annotations:
     kubernetes.io/ingress.class: traefik
     cert-manager.io/cluster-issuer: zerossl-production
@@ -16,7 +16,7 @@ spec:
   tls:
     - hosts:
         - {{ .Values.domain }}
-      secretName: zeorssl-registry-secret
+      secretName: zeorssl-keys-secret
   rules:
     - host: {{ .Values.domain }}
       http:
