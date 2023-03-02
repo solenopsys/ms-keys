@@ -1,4 +1,4 @@
-package main
+package internal
 
 import (
 	"encoding/json"
@@ -6,22 +6,24 @@ import (
 	"github.com/patrickmn/go-cache"
 	"io/ioutil"
 	"k8s.io/klog/v2"
+	"ms-keys/pkg"
 	"net/http"
 )
 
 type RestServer struct {
-	sessions   *cache.Cache
-	db         *DriveDb
-	successUrl string
-	errorUrl   string
-	mailServer *MailServ
+	Sessions      *cache.Cache
+	Db            PersistedData
+	MailServer    MailSenderInterface
+	SuccessUrl    string
+	ErrorUrl      string
+	ListenAddress string
 }
 
-func (s *RestServer) runServer() {
+func (s *RestServer) Run() {
 	http.HandleFunc("/register", s.register)
 	http.HandleFunc("/verify", s.verify)
 	http.HandleFunc("/key", s.key)
-	klog.Fatal(http.ListenAndServe(listenAddress, nil))
+	klog.Fatal(http.ListenAndServe(s.ListenAddress, nil))
 }
 
 func (s *RestServer) verify(w http.ResponseWriter, r *http.Request) {
@@ -30,14 +32,14 @@ func (s *RestServer) verify(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	session := r.URL.Query().Get("session")
-	stored, b := s.sessions.Get(session)
+	stored, b := s.Sessions.Get(session)
 	if !b {
-		http.Redirect(w, r, s.errorUrl, http.StatusSeeOther)
+		http.Redirect(w, r, s.ErrorUrl, http.StatusSeeOther)
 		return
 	} else {
-		register := stored.(RegisterData)
-		s.db.saveRegister(register)
-		http.Redirect(w, r, s.successUrl, http.StatusSeeOther)
+		register := stored.(pkg.RegisterData)
+		s.Db.SaveRegister(register)
+		http.Redirect(w, r, s.SuccessUrl, http.StatusSeeOther)
 		return
 	}
 }
@@ -48,11 +50,10 @@ func (s *RestServer) key(w http.ResponseWriter, r *http.Request) { // check get 
 		return
 	}
 
-	// get uuid
 	mail := r.URL.Query().Get("mail")
 	hash := r.URL.Query().Get("hash")
 
-	data, err := s.db.loadRegister(mail)
+	data, err := s.Db.LoadRegister(mail)
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -86,7 +87,7 @@ func (s *RestServer) register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Parse the JSON payload into a User struct.
-	var register RegisterData
+	var register pkg.RegisterData
 	err = json.Unmarshal(body, &register)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -94,11 +95,11 @@ func (s *RestServer) register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	session := uuid.New()
-	sessions.Add(session.String(), register, cache.DefaultExpiration)
-	s.mailServer.sendMail(register, session)
+	s.Sessions.Add(session.String(), register, cache.DefaultExpiration)
+	s.MailServer.SendEMail(register, session)
 
 	klog.Info("Register: ", register.Email, " session: ", session.String())
 
 	// Return a response indicating success.
-	json.NewEncoder(w).Encode(sessions)
+	json.NewEncoder(w).Encode(s.Sessions)
 }

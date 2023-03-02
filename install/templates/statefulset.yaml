@@ -21,15 +21,23 @@ spec:
             - name: LISTEN_ADDRESS
               value: "0.0.0.0:{{ .Values.service.httpPort }}"
             - name: SUCCESS_REDIRECT
-              value: {{ .Values.successRedirect }}
+              value: {{ .Values.uiHost }}/{{ .Values.successRedirect }}
             - name: ERROR_REDIRECT
-              value: {{ .Values.errorRedirect }}
+              value: {{.Values.uiHost}}/{{ .Values.errorRedirect }}
             - name: DB_PATH
+              value: "/data"
+            - name: AUTH_SERVICE_HOST
+              value: {{ .Values.domain }}}}
+            - name: MAIL_SERVER_HOST
+              value: {{.Values.smtpServer.host}}}}
+            - name: MAIL_SERVER_PORT
+              value: {{.Values.smtpServer.port}}}}
+            - name: MAIL_FROM_ADDRESS
               value: "/data"
           name: {{ .Values.container.name }}
           imagePullPolicy: {{ .Values.container.pullPolicy }}
           ports:
-            - containerPort: {{ .Values.ports.httpPort }}
+            - containerPort: {{ .Values.service.port }}
               name: http
           volumeMounts:
             - name: {{ .Values.storage.data.volumeName }}

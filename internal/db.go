@@ -1,33 +1,34 @@
-package main
+package internal
 
 import (
 	"encoding/json"
 	"github.com/dgraph-io/badger/v3"
 	"k8s.io/klog/v2"
+	"ms-keys/pkg"
 )
 
 type DriveDb struct {
-	path string
+	Path string
 	db   *badger.DB
 }
 
-func (d *DriveDb) open() {
+func (d *DriveDb) Open() {
 	var err error
-	d.db, err = badger.Open(badger.DefaultOptions(d.path))
+	d.db, err = badger.Open(badger.DefaultOptions(d.Path))
 	if err != nil {
 		klog.Fatal(err)
 	}
 }
 
-func (d *DriveDb) close() {
+func (d *DriveDb) Close() {
 	err := d.db.Close()
 	if err != nil {
 		klog.Fatal(err)
 	}
 }
 
-func (d *DriveDb) loadRegister(email string) (RegisterData, error) {
-	var register RegisterData
+func (d *DriveDb) LoadRegister(email string) (pkg.RegisterData, error) {
+	var register pkg.RegisterData
 	err := d.db.View(func(txn *badger.Txn) error {
 		item, err := txn.Get([]byte(email))
 		if err != nil {
@@ -49,7 +50,7 @@ func (d *DriveDb) loadRegister(email string) (RegisterData, error) {
 	return register, nil
 }
 
-func (d *DriveDb) saveRegister(register RegisterData) {
+func (d *DriveDb) SaveRegister(register pkg.RegisterData) {
 	err := d.db.Update(func(txn *badger.Txn) error {
 		jsonRegister, err := json.Marshal(register)
 

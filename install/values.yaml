@@ -1,9 +1,10 @@
 replicasCount: 1
 fullName: "platform-ms-keys"
 selectorLabel: "platform-ms-keys"
+domain : "keys.solenopsys.org"
 
 service:
-  httpPort: 8080
+  port: 8080
 
 storage:
   data:
@@ -16,6 +17,12 @@ container:
   image: registry.solenopsys.org/platform-ms-keys
   pullPolicy: Always
 
-mailHost: "mail.solenopsys.org"
+uiHost: "solenopsys.org"
+
+smtpServer:
+  host: "solenopsys-mail.svc.cluster.local"
+  port: 8587
+
+
 successRedirect: "/login"
 errorRedirect: "/session-not-found"

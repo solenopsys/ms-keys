@@ -1,5 +1,5 @@
 apiVersion: v2
-name: ms-keys
+name: platform-ms-keys
 version: 0.1.0
 description: Keys server
 icon: "http://alexstorm.solenopsys.org/apps/assets/ms-keys.svg"

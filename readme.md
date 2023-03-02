@@ -1,4 +1,4 @@
 # Keys memorise service
-save encripted keys
+save encrypted keys
 
 
