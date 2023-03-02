@@ -1,0 +1,21 @@
+replicasCount: 1
+fullName: "platform-ms-keys"
+selectorLabel: "platform-ms-keys"
+
+service:
+  httpPort: 8080
+
+storage:
+  data:
+    volumeName: keys-db-vol
+    storageSize: 1Gi
+    accessModes: "ReadWriteOnce"
+
+container:
+  name: server
+  image: registry.solenopsys.org/platform-ms-keys
+  pullPolicy: Always
+
+mailHost: "mail.solenopsys.org"
+successRedirect: "/login"
+errorRedirect: "/session-not-found"

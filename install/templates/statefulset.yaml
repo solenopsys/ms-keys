@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.fullName }}
+  labels:
+    app: {{ .Values.fullName }}
+spec:
+  serviceName: {{ .Values.fullName }}
+  replicas: {{ .Values.replicasCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.fullName }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.fullName }}
+    spec:
+      containers:
+        - image: {{ .Values.container.image }}
+          env:
+            - name: LISTEN_ADDRESS
+              value: "0.0.0.0:{{ .Values.service.httpPort }}"
+            - name: SUCCESS_REDIRECT
+              value: {{ .Values.successRedirect }}
+            - name: ERROR_REDIRECT
+              value: {{ .Values.errorRedirect }}
+            - name: DB_PATH
+              value: "/data"
+          name: {{ .Values.container.name }}
+          imagePullPolicy: {{ .Values.container.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.ports.httpPort }}
+              name: http
+          volumeMounts:
+            - name: {{ .Values.storage.data.volumeName }}
+              mountPath: /data
+  updateStrategy:
+    type: RollingUpdate
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ .Values.storage.data.volumeName }}
+        annotations:
+          volume.alpha.kubernetes.io/storage-class: anything
+      spec:
+        accessModes:
+          - {{ .Values.storage.data.accessModes }}
+        resources:
+          requests:
+            storage: {{ .Values.storage.data.storageSize }}
