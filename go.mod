@@ -5,6 +5,7 @@ go 1.19
 require (
 	github.com/dgraph-io/badger/v3 v3.2103.5
 	github.com/google/uuid v1.3.0
+	github.com/joho/godotenv v1.5.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	k8s.io/klog/v2 v2.90.1
 )

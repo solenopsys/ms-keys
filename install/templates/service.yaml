@@ -6,7 +6,7 @@ metadata:
   name: {{ .Values.fullName}}
 spec:
   ports:
-    - port: {{ .Values.service.httpPort }}
+    - port: {{ .Values.service.port }}
       name: http
   selector:
     app: {{ .Values.selectorLabel }}

@@ -19,7 +19,7 @@ spec:
         - image: {{ .Values.container.image }}
           env:
             - name: LISTEN_ADDRESS
-              value: "0.0.0.0:{{ .Values.service.httpPort }}"
+              value: "0.0.0.0:{{ .Values.service.port }}"
             - name: SUCCESS_REDIRECT
               value: {{ .Values.uiHost }}/{{ .Values.successRedirect }}
             - name: ERROR_REDIRECT
