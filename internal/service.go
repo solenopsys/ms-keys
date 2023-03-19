@@ -7,14 +7,13 @@ import (
 	"io/ioutil"
 	"k8s.io/klog/v2"
 	"ms-keys/pkg"
-	register_transport "ms-keys/register-transport"
 	"net/http"
 )
 
 type RestServer struct {
 	Sessions         *cache.Cache
 	Db               PersistedData
-	TransportService *register_transport.Service
+	TransportService *Service
 	SuccessUrl       string
 	ErrorUrl         string
 	ListenAddress    string

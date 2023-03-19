@@ -1,4 +1,4 @@
-package register_transport
+package internal
 
 import (
 	"github.com/google/uuid"
