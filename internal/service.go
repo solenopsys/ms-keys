@@ -7,22 +7,25 @@ import (
 	"io/ioutil"
 	"k8s.io/klog/v2"
 	"ms-keys/pkg"
+	register_transport "ms-keys/register-transport"
 	"net/http"
 )
 
 type RestServer struct {
-	Sessions      *cache.Cache
-	Db            PersistedData
-	MailServer    MailSenderInterface
-	SuccessUrl    string
-	ErrorUrl      string
-	ListenAddress string
+	Sessions         *cache.Cache
+	Db               PersistedData
+	TransportService *register_transport.Service
+	SuccessUrl       string
+	ErrorUrl         string
+	ListenAddress    string
 }
 
 func (s *RestServer) Run() {
-	http.HandleFunc("/register", s.register)
-	http.HandleFunc("/verify", s.verify)
-	http.HandleFunc("/key", s.key)
+	prefix := "/api"
+	http.HandleFunc(prefix+"/register", s.register)
+	http.HandleFunc(prefix+"/verify", s.verify)
+	http.HandleFunc(prefix+"/api", s.key)
+	http.HandleFunc(prefix+"/ok", s.health)
 	klog.Fatal(http.ListenAndServe(s.ListenAddress, nil))
 }
 
@@ -44,6 +47,11 @@ func (s *RestServer) verify(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (s *RestServer) health(w http.ResponseWriter, r *http.Request) { // check get params
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("AUTH WORKS"))
+}
+
 func (s *RestServer) key(w http.ResponseWriter, r *http.Request) { // check get params
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -59,7 +67,7 @@ func (s *RestServer) key(w http.ResponseWriter, r *http.Request) { // check get 
 		w.WriteHeader(http.StatusNotFound)
 		return
 	}
-	if hash != data.PasswordHash {
+	if hash != data.Hash {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	} else {
@@ -96,10 +104,21 @@ func (s *RestServer) register(w http.ResponseWriter, r *http.Request) {
 
 	session := uuid.New()
 	s.Sessions.Add(session.String(), register, cache.DefaultExpiration)
-	s.MailServer.SendEMail(register, session)
+	s.TransportService.Send(register.Transport, register, session)
 
-	klog.Info("Register: ", register.Email, " session: ", session.String())
+	klog.Info("Register: ", register.Login, " session: ", session.String())
 
 	// Return a response indicating success.
 	json.NewEncoder(w).Encode(s.Sessions)
+}
+
+// list transport
+func (s *RestServer) listTransport(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
+	// Return a response indicating success.
+	json.NewEncoder(w).Encode(s.TransportService.List())
 }

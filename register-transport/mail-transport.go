@@ -1,4 +1,4 @@
-package internal
+package register_transport
 
 import (
 	"github.com/google/uuid"
@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-type MailServ struct {
+type MailTransport struct {
 	From         string
 	Host         string
 	Port         string
@@ -16,8 +16,8 @@ type MailServ struct {
 	smtpPassword string
 }
 
-func (m *MailServ) SendEMail(register pkg.RegisterData, session uuid.UUID) {
-	to := []string{register.Email}
+func (m *MailTransport) Send(register pkg.RegisterData, session uuid.UUID) {
+	to := []string{register.Login}
 	subject := "Register in Solenopsys"
 	body := "You are successfully registered in Solenopsys. Please click on the link below to verify your email address.\r\n" +
 		m.AuthHost + "/verify?session=" + session.String()

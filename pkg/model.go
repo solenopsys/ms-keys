@@ -1,8 +1,9 @@
 package pkg
 
 type RegisterData struct {
-	Email        string `json:"email"`
+	Transport    string `json:"transport"`
+	Login        string `json:"login"`
 	EncryptedKey string `json:"ekey"`
 	PublicKey    string `json:"pkey"`
-	PasswordHash string `json:"hash"`
+	Hash         string `json:"hash"`
 }
