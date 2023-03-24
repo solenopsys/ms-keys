@@ -7,6 +7,14 @@ import (
 	"ms-keys/pkg"
 )
 
+func NewDb(path string) *DriveDb {
+	db := &DriveDb{
+		Path: path,
+	}
+	db.Open()
+	return db
+}
+
 type DriveDb struct {
 	Path string
 	db   *badger.DB
@@ -51,16 +59,15 @@ func (d *DriveDb) LoadRegister(hash string) (pkg.RegisterData, error) {
 }
 
 func (d *DriveDb) SaveRegister(register pkg.RegisterData) {
-	err := d.db.Update(func(txn *badger.Txn) error {
-		jsonRegister, err := json.Marshal(register)
 
-		err = txn.Set([]byte(register.Hash), []byte(jsonRegister))
-		if err != nil {
-			return err
-		}
-		return txn.Commit()
+	jsonRegister, err := json.Marshal(register)
+	if err != nil {
+		klog.Error(err)
+	}
+	err = d.db.Update(func(txn *badger.Txn) error {
+		return txn.Set([]byte(register.Hash), jsonRegister)
 	})
 	if err != nil {
-		klog.Fatal(err)
+		klog.Error(err)
 	}
 }

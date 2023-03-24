@@ -28,6 +28,7 @@ func main() {
 			panic(err)
 		}
 	}
+	var dbPath = os.Getenv("DB_PATH")
 	var listenAddress = os.Getenv("LISTEN_ADDRESS")
 	var successRedirect = os.Getenv("SUCCESS_REDIRECT")
 	var errorRedirect = os.Getenv("ERROR_REDIRECT")
@@ -51,14 +52,19 @@ func main() {
 	}
 	th.AddTransport("mail", &mt)
 
+	db := internal.NewDb(dbPath)
+
 	restServer := internal.RestServer{
 		Sessions:         sessions,
 		TransportService: th,
 		SuccessUrl:       successRedirect,
 		ErrorUrl:         errorRedirect,
 		ListenAddress:    listenAddress,
+		Db:               db,
 	}
 
 	println("start server on " + listenAddress)
 	restServer.Run()
+
+	defer db.Close()
 }

@@ -23,7 +23,7 @@ func (s *RestServer) Run() {
 	prefix := "/api"
 	http.HandleFunc(prefix+"/register", s.register)
 	http.HandleFunc(prefix+"/verify", s.verify)
-	http.HandleFunc(prefix+"/api", s.key)
+	http.HandleFunc(prefix+"/key", s.getKey)
 	http.HandleFunc(prefix+"/ok", s.health)
 	klog.Fatal(http.ListenAndServe(s.ListenAddress, nil))
 }
@@ -51,16 +51,20 @@ func (s *RestServer) health(w http.ResponseWriter, r *http.Request) { // check g
 	w.Write([]byte("AUTH WORKS"))
 }
 
-func (s *RestServer) key(w http.ResponseWriter, r *http.Request) { // check get params
-	if r.Method != http.MethodGet {
+func (s *RestServer) getKey(w http.ResponseWriter, r *http.Request) { // check get params
+	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
 
-	mail := r.URL.Query().Get("mail")
-	hash := r.URL.Query().Get("hash")
+	hashBytes, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
 
-	data, err := s.Db.LoadRegister(mail)
+	hash := string(hashBytes)
+	data, err := s.Db.LoadRegister(hash)
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)

@@ -1,0 +1,11 @@
+apiVersion: helm.cattle.io/v1
+kind: HelmChart
+metadata:
+  name: platform-ms-keys
+  namespace: kube-system
+spec:
+  chart: platform-ms-keys
+  targetNamespace: default
+  version: 0.1.4
+  repo: https://helm.solenopsys.org
+  helmVersion: v3
