@@ -1,6 +1,6 @@
 module ms-keys
 
-go 1.19
+go 1.20.3
 
 require (
 	github.com/dgraph-io/badger/v3 v3.2103.5
