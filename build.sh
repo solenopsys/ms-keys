@@ -14,11 +14,11 @@ helm_build_push(){
 REGISTRY=registry.solenopsys.org
 NAME=platform-ms-keys
 ARCHS="amd64"
-VER=0.1.4
+VER=0.1.6
 
 
 helm_build_push
-build_push
+#build_push
 
 
 

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/google/uuid"
 	"github.com/patrickmn/go-cache"
+	"github.com/rs/cors"
 	"io/ioutil"
 	"k8s.io/klog/v2"
 	"ms-keys/pkg"
@@ -20,12 +21,15 @@ type RestServer struct {
 }
 
 func (s *RestServer) Run() {
+	mux := http.NewServeMux()
 	prefix := "/api"
-	http.HandleFunc(prefix+"/register", s.register)
-	http.HandleFunc(prefix+"/verify", s.verify)
-	http.HandleFunc(prefix+"/key", s.getKey)
-	http.HandleFunc(prefix+"/ok", s.health)
-	klog.Fatal(http.ListenAndServe(s.ListenAddress, nil))
+	mux.HandleFunc(prefix+"/register", s.register)
+	mux.HandleFunc(prefix+"/verify", s.verify)
+	mux.HandleFunc(prefix+"/key", s.getKey)
+	mux.HandleFunc(prefix+"/ok", s.health)
+	handler := cors.Default().Handler(mux)
+
+	klog.Fatal(http.ListenAndServe(s.ListenAddress, handler))
 }
 
 func (s *RestServer) verify(w http.ResponseWriter, r *http.Request) {
@@ -111,6 +115,7 @@ func (s *RestServer) register(w http.ResponseWriter, r *http.Request) {
 
 	klog.Info("Register: ", register.Login, " session: ", session.String())
 
+	w.WriteHeader(http.StatusOK)
 	// Return a response indicating success.
 	json.NewEncoder(w).Encode(s.Sessions)
 }
@@ -123,5 +128,6 @@ func (s *RestServer) listTransport(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Return a response indicating success.
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(s.TransportService.List())
 }

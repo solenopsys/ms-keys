@@ -6,6 +6,6 @@ metadata:
 spec:
   chart: platform-ms-keys
   targetNamespace: default
-  version: 0.1.4
+  version: 0.1.6
   repo: https://helm.solenopsys.org
   helmVersion: v3

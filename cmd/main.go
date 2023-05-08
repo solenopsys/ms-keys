@@ -41,16 +41,16 @@ func main() {
 	sessions := cache.New(5*time.Minute, 10*time.Minute)
 
 	th := internal.NewTransportHolder()
-	if devMode {
-		th.AddTransport("log", &internal.LogTransport{})
-	}
+	//if devMode {
+	th.AddTransport("log", &internal.LogTransport{})
+	//}
 	mt := internal.MailTransport{
 		AuthHost: authServiceHost,
 		From:     fromAddress,
 		Host:     mailServerHost,
 		Port:     mailServerPort,
 	}
-	th.AddTransport("mail", &mt)
+	th.AddTransport("email", &mt)
 
 	db := internal.NewDb(dbPath)
 
