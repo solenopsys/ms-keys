@@ -9,11 +9,12 @@ import (
 )
 
 type MailTransport struct {
-	From         string
-	Host         string
-	Port         string
-	AuthHost     string
-	smtpPassword string
+	From     string
+	Host     string
+	Port     string
+	AuthHost string
+	Password string
+	Username string
 }
 
 func (m *MailTransport) Send(register pkg.RegisterData, session uuid.UUID) {
@@ -23,7 +24,7 @@ func (m *MailTransport) Send(register pkg.RegisterData, session uuid.UUID) {
 		m.AuthHost + "/verify?session=" + session.String()
 
 	// Set up authentication information.
-	auth := smtp.PlainAuth("", m.From, m.smtpPassword, m.Host)
+	auth := smtp.PlainAuth("", m.Username, m.Password, m.Host)
 
 	// Set up the email message.
 	msg := "To: " + strings.Join(to, ",") + "\r\n" +

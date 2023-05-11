@@ -17,12 +17,16 @@ container:
   image: registry.solenopsys.org/platform-ms-keys
   pullPolicy: Always
 
-uiHost: "solenopsys.org"
+
 
 smtpServer:
-  host: "solenopsys-mail.svc.cluster.local"
-  port: 8587
+  host: "email-smtp.us-east-1.amazonaws.com"
+  port: 25
+  user: "***" # change it by install parameter
+  pass: "***" # change it by install parameter
 
 
+
+uiHost: "solenopsys.org"
 successRedirect: "/login"
 errorRedirect: "/session-not-found"

@@ -6,6 +6,7 @@ import (
 	"github.com/joho/godotenv"
 	"github.com/patrickmn/go-cache"
 	"ms-keys/internal"
+	"ms-keys/pkg"
 	"os"
 	"time"
 )
@@ -41,14 +42,21 @@ func main() {
 	sessions := cache.New(5*time.Minute, 10*time.Minute)
 
 	th := internal.NewTransportHolder()
-	//if devMode {
+	if devMode {
 	th.AddTransport("log", &internal.LogTransport{})
-	//}
+	}
+
+
+
+	pkg.ReadConfigMap("ms-keys", clientset)
+
 	mt := internal.MailTransport{
 		AuthHost: authServiceHost,
 		From:     fromAddress,
 		Host:     mailServerHost,
 		Port:     mailServerPort,
+		Password:,
+		Username:,
 	}
 	th.AddTransport("email", &mt)
 
