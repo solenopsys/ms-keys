@@ -5,8 +5,8 @@ import (
 	_ "github.com/google/uuid"
 	"github.com/joho/godotenv"
 	"github.com/patrickmn/go-cache"
+	bl_kubernetes_tools "github.com/solenopsys/bl-kubernetes-tools"
 	"ms-keys/internal"
-	"ms-keys/pkg"
 	"os"
 	"time"
 )
@@ -43,20 +43,20 @@ func main() {
 
 	th := internal.NewTransportHolder()
 	if devMode {
-	th.AddTransport("log", &internal.LogTransport{})
+		th.AddTransport("log", &internal.LogTransport{})
 	}
 
+	config, _ := bl_kubernetes_tools.CreateKubeConfig(devMode)
 
-
-	pkg.ReadConfigMap("ms-keys", clientset)
+	smtpConfigmap := bl_kubernetes_tools.ReadConfigMap("ms-keys", config)
 
 	mt := internal.MailTransport{
 		AuthHost: authServiceHost,
 		From:     fromAddress,
 		Host:     mailServerHost,
 		Port:     mailServerPort,
-		Password:,
-		Username:,
+		Password: string(smtpConfigmap["smtp-pass"]),
+		Username: string(smtpConfigmap["smtp-user"]),
 	}
 	th.AddTransport("email", &mt)
 

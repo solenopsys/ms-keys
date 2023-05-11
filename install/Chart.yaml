@@ -1,8 +1,8 @@
 apiVersion: v2
 name: platform-ms-keys
-version: 0.1.6
+version: 0.1.7
 description: Keys server
-icon: "http://klogsolenopsys.org/apps/assets/ms-keys.svg"
+icon: "http://solenopsys.org/apps/assets/ms-keys.svg"
 appVersion: 1.0.0
 
 
