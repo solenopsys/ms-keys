@@ -14,7 +14,7 @@ storage:
 
 container:
   name: server
-  image: registry.solenopsys.org/platform-ms-keys
+  image: registry.solenopsys.org/ms-keys
   pullPolicy: Always
 
 

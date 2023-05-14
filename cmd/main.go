@@ -13,6 +13,7 @@ import (
 
 var Mode string
 
+const SECRET_NAME = "platform-ms-keys"
 const DEV_MODE = "dev"
 
 func init() {
@@ -48,7 +49,7 @@ func main() {
 
 	config, _ := bl_kubernetes_tools.CreateKubeConfig(devMode)
 
-	smtpConfigmap := bl_kubernetes_tools.ReadConfigMap("ms-keys", config)
+	smtpConfigmap := bl_kubernetes_tools.ReadConfigMap(SECRET_NAME, config)
 
 	mt := internal.MailTransport{
 		AuthHost: authServiceHost,
