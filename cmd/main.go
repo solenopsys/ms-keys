@@ -5,7 +5,6 @@ import (
 	_ "github.com/google/uuid"
 	"github.com/joho/godotenv"
 	"github.com/patrickmn/go-cache"
-	bl_kubernetes_tools "github.com/solenopsys/bl-kubernetes-tools"
 	"ms-keys/internal"
 	"os"
 	"time"
@@ -25,7 +24,7 @@ func main() {
 	devMode := Mode == DEV_MODE
 
 	if devMode {
-		err := godotenv.Load("local.env")
+		err := godotenv.Load("local-sec.env")
 		if err != nil {
 			panic(err)
 		}
@@ -39,6 +38,8 @@ func main() {
 	var mailServerHost = os.Getenv("MAIL_SERVER_HOST")
 	var mailServerPort = os.Getenv("MAIL_SERVER_PORT")
 	var fromAddress = os.Getenv("MAIL_FROM_ADDRESS")
+	var smtpUser = os.Getenv("SMTP_USERNAME")
+	var smtpPass = os.Getenv("SMTP_PASSWORD")
 
 	sessions := cache.New(5*time.Minute, 10*time.Minute)
 
@@ -47,17 +48,13 @@ func main() {
 		th.AddTransport("log", &internal.LogTransport{})
 	}
 
-	config, _ := bl_kubernetes_tools.CreateKubeConfig(devMode)
-
-	smtpConfigmap := bl_kubernetes_tools.ReadConfigMap(SECRET_NAME, config)
-
 	mt := internal.MailTransport{
 		AuthHost: authServiceHost,
 		From:     fromAddress,
 		Host:     mailServerHost,
 		Port:     mailServerPort,
-		Password: string(smtpConfigmap["smtp-pass"]),
-		Username: string(smtpConfigmap["smtp-user"]),
+		Password: string(smtpPass),
+		Username: string(smtpUser),
 	}
 	th.AddTransport("email", &mt)
 

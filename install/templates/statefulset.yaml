@@ -34,6 +34,16 @@ spec:
               value: {{.Values.smtpServer.port}}}}
             - name: MAIL_FROM_ADDRESS
               value: "/data"
+            - name: SMTP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.fullName }}
+                  key: smtp-user
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.fullName }}
+                  key: smtp-pass
           name: {{ .Values.container.name }}
           imagePullPolicy: {{ .Values.container.pullPolicy }}
           ports:
