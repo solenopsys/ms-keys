@@ -27,13 +27,13 @@ spec:
             - name: DB_PATH
               value: "/data"
             - name: AUTH_SERVICE_HOST
-              value: {{ .Values.domain }}}}
+              value: "{{ .Values.domain }}"
             - name: MAIL_SERVER_HOST
-              value: {{.Values.smtpServer.host}}}}
+              value: "{{.Values.smtpServer.host}}"
             - name: MAIL_SERVER_PORT
-              value: {{.Values.smtpServer.port}}}}
+              value: "{{.Values.smtpServer.port}}"
             - name: MAIL_FROM_ADDRESS
-              value: "/data"
+              value: "{{ .Values.mailFrom }}"
             - name: SMTP_USERNAME
               valueFrom:
                 secretKeyRef:

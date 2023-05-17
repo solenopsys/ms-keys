@@ -7,10 +7,12 @@ import (
 )
 
 type LogTransport struct {
+	AuthHost string
 }
 
 func (l *LogTransport) Send(register pkg.RegisterData, session uuid.UUID) {
-	host := "http://localhost:8899"
+
+	host := l.AuthHost
 	url := host + "/api/verify?session=" + session.String()
 	klog.Info("Register verify url: ", url)
 }

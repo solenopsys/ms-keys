@@ -18,7 +18,7 @@ func (t *Service) AddTransport(name string, transport Transport) {
 }
 
 func (t *Service) Send(name string, register pkg.RegisterData, session uuid.UUID) {
-	t.transports[name].Send(register, session)
+	go t.transports[name].Send(register, session)
 }
 
 func (t *Service) List() []string {

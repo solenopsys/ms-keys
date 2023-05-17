@@ -2,6 +2,7 @@ replicasCount: 1
 fullName: "platform-ms-keys"
 selectorLabel: "platform-ms-keys"
 domain : "keys.solenopsys.org"
+mailFrom : "register@solenopsys.org"
 
 service:
   port: 8080
@@ -20,13 +21,13 @@ container:
 
 
 smtpServer:
-  host: "email-smtp.us-east-1.amazonaws.com"
+  host: "email-smtp.eu-west-1.amazonaws.com"
   port: 25
   user: "***" # change it by install parameter
   pass: "***" # change it by install parameter
 
 
 
-uiHost: "solenopsys.org"
-successRedirect: "/login"
-errorRedirect: "/session-not-found"
+uiHost: "auth.solenopsys.org"
+successRedirect: "/confirm?state=success"
+errorRedirect: "/confirm?state=error"
