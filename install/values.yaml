@@ -1,7 +1,7 @@
 replicasCount: 1
 fullName: "platform-ms-keys"
 selectorLabel: "platform-ms-keys"
-domain : "keys.solenopsys.org"
+domain : "auth.solenopsys.org"
 mailFrom : "register@solenopsys.org"
 
 service:
@@ -22,12 +22,12 @@ container:
 
 smtpServer:
   host: "email-smtp.eu-west-1.amazonaws.com"
-  port: 25
+  port: 587
   user: "***" # change it by install parameter
   pass: "***" # change it by install parameter
 
 
 
 uiHost: "auth.solenopsys.org"
-successRedirect: "/confirm?state=success"
-errorRedirect: "/confirm?state=error"
+successRedirect: "/confirm/?state=success"
+errorRedirect: "/confirm/?state=error"
